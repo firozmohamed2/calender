@@ -29,10 +29,12 @@ function renderCalendar() {
 
   let datesHtml = "";
 
+  // Generate previous month's inactive days
   for (let i = start; i > 0; i--) {
     datesHtml += `<li class="inactive">${endDatePrev - i + 1}</li>`;
   }
 
+  // Generate current month's active days
   for (let i = 1; i <= endDate; i++) {
     let className =
       i === date.getDate() &&
@@ -43,12 +45,43 @@ function renderCalendar() {
     datesHtml += `<li${className}>${i}</li>`;
   }
 
+  // Generate next month's inactive days
   for (let i = end; i < 6; i++) {
     datesHtml += `<li class="inactive">${i - end + 1}</li>`;
   }
 
   dates.innerHTML = datesHtml;
   header.textContent = `${months[month]} ${year}`;
+
+  // Call the function to change specific dates' colors
+  leaveDayColour(2, 8, 2024); // Change September 2, 2024 to red
+  leaveDayColour(4, 8, 2024); // Change September 4, 2024 to red
+  leaveDayColour(6, 7, 2024); // Change August 6, 2024 to red
+  lateDayColour(5, 7, 2024); // Change August 6, 2024 to red
+
+}
+
+// Function to change the color of a specific date
+function leaveDayColour(day, monthToChange, yearToChange) {
+  if (month === monthToChange && year === yearToChange) {
+    const allDates = document.querySelectorAll(".dates li");
+    allDates.forEach((dateItem) => {
+      if (dateItem.textContent == day && !dateItem.classList.contains("inactive")) {
+        dateItem.style.color = "red";
+      }
+    });
+  }
+}
+
+function lateDayColour(day, monthToChange, yearToChange) {
+  if (month === monthToChange && year === yearToChange) {
+    const allDates = document.querySelectorAll(".dates li");
+    allDates.forEach((dateItem) => {
+      if (dateItem.textContent == day && !dateItem.classList.contains("inactive")) {
+        dateItem.style.color = "yellow";
+      }
+    });
+  }
 }
 
 navs.forEach((nav) => {
@@ -71,6 +104,14 @@ navs.forEach((nav) => {
 
     renderCalendar();
   });
+});
+
+// Add event listener for clicks on the dates
+dates.addEventListener("click", (e) => {
+  if (e.target.tagName === "LI" && !e.target.classList.contains("inactive")) {
+    const clickedDate = e.target.textContent;
+    console.log(`${months[month]} ${clickedDate}, ${year}`);
+  }
 });
 
 renderCalendar();
